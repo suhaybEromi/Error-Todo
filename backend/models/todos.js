@@ -23,8 +23,13 @@ const todoSchema = new Schema(
       type: String,
       required: true,
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true },
 );
 
-module.exports = mongoose.model("Todos", todoSchema);
+module.exports = mongoose.model("Todo", todoSchema);

@@ -8,8 +8,17 @@ module.exports = buildSchema(`
         textError: String!
         textFix: String!
         textCode: String!
+        creator: User!
         createdAt: String!
         updatedAt: String!
+    }
+
+    type User {
+        _id: ID!
+        email: String!
+        password: String!
+        name: String!
+        todos: [Todo!]!
     }
 
     input TodoInput {
@@ -20,8 +29,16 @@ module.exports = buildSchema(`
         textCode: String!
     }
 
+    input UserInput {
+        email: String!
+        password: String!
+        name: String!
+    }
+
     type RootMutation {
-        createTodo(todoInput: TodoInput): Todo
+        createTodo(todoInput: TodoInput!): Todo!
+        createUser(userInput: UserInput!): User!
+        updateTodo(id: ID! , todoInput: TodoInput!): Todo!
         deleteTodo(id: ID!): Boolean
     }
 

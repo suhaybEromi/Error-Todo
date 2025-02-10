@@ -2,6 +2,7 @@ const Todo = require("../models/todos");
 const User = require("../models/user");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getTodos = async () => {
   try {
@@ -61,7 +62,36 @@ const createUser = async ({ userInput }) => {
   };
 };
 
+const login = async ({ email, password }, req) => {
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    const error = new Error("User not found");
+    error.code = 401;
+    throw error;
+  }
+
+  const isEqual = await bcrypt.compare(password, user.password);
+
+  if (!isEqual) {
+    const error = new Error("Password is incorrect");
+    error.code = 401;
+    throw error;
+  }
+
+  const token = jwt.sign(
+    { userId: user._id.toString(), email: user.email },
+    process.env.SECRET_KEY,
+    { expiresIn: "3h" },
+  );
+  return { token: token, userId: user._id.toString() };
+};
+
 const createTodo = async ({ todoInput }, req) => {
+  if (!req.isAuth) {
+    const error = new Error("Not Authenticated!");
+    error.code = 401;
+    throw error;
+  }
   const errors = [];
   if (
     validator.isEmpty(todoInput.title) ||
@@ -95,20 +125,31 @@ const createTodo = async ({ todoInput }, req) => {
     throw error;
   }
 
+  const user = await User.findById(req.userId);
+  if (!user) {
+    const error = new Error("Invalid user");
+    error.code = 401;
+    throw error;
+  }
+
   const todo = new Todo({
     title: todoInput.title,
     imageUrl: todoInput.imageUrl,
     textError: todoInput.textError,
     textFix: todoInput.textFix,
     textCode: todoInput.textCode,
+    creator: user._id,
   });
 
-  const result = await todo.save();
+  const createdTodo = await todo.save();
+  user.todos.push(createdTodo);
+  await user.save();
+
   return {
-    ...result._doc,
-    _id: result._id.toString(),
-    createdAt: result.createdAt.toISOString(),
-    updatedAt: result.updatedAt.toISOString(),
+    ...createdTodo._doc,
+    _id: createdTodo._id.toString(),
+    createdAt: createdTodo.createdAt.toISOString(),
+    updatedAt: createdTodo.updatedAt.toISOString(),
   };
 };
 
@@ -183,4 +224,11 @@ const deleteTodo = async ({ id }) => {
   }
 };
 
-module.exports = { getTodos, createUser, createTodo, deleteTodo, updateTodo };
+module.exports = {
+  getTodos,
+  createUser,
+  createTodo,
+  deleteTodo,
+  updateTodo,
+  login,
+};

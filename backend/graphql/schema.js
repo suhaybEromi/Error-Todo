@@ -8,7 +8,7 @@ module.exports = buildSchema(`
         textError: String!
         textFix: String!
         textCode: String!
-        creator: User!
+        creator: User
         createdAt: String!
         updatedAt: String!
     }
@@ -19,6 +19,11 @@ module.exports = buildSchema(`
         password: String!
         name: String!
         todos: [Todo!]!
+    }
+
+    type AuthData {
+        token: String!
+        userId: String!
     }
 
     input TodoInput {
@@ -44,6 +49,7 @@ module.exports = buildSchema(`
 
     type RootQuery {
         todos: [Todo!]!
+        login(email: String! , password: String!): AuthData!
     }
 
     schema {

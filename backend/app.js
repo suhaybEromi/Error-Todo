@@ -6,6 +6,7 @@ const fs = require("fs");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const multer = require("multer");
+const auth = require("./middleware/auth");
 const { clearImage } = require("./util/file");
 
 const { graphqlHTTP } = require("express-graphql");
@@ -43,6 +44,8 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
+
+app.use(auth);
 
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"),

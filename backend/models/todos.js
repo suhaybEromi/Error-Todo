@@ -9,24 +9,31 @@ const todoSchema = new Schema(
     },
     imageUrl: {
       type: String,
-      required: true,
+      required: false,
     },
-    textError: {
+    errorDescription: {
       type: String,
       required: true,
+      default: "No error description provided.",
     },
-    textFix: {
+    fixCode: {
       type: String,
       required: true,
+      default: "No error fix provided.",
     },
-    textCode: {
+    fixExplanation: {
       type: String,
       required: true,
+      default: "No explanation fix provided.",
+    },
+    status: {
+      type: String,
+      enum: ["pending", "resolved"],
+      default: "pending",
     },
     creator: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: String,
+      default: "suhayb",
     },
   },
   { timestamps: true },

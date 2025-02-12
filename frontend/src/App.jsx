@@ -1,24 +1,58 @@
-import ErrorPage from "./components/ErrorPage";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import image from "./assets/img/Group.png";
 
 function App() {
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const getTodos = async () => {
+      try {
+        const response = await axios("http://localhost:4000/api/todos");
+        setTodos(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching todos:", error);
+        setLoading(false);
+        setError(true);
+      }
+    };
+
+    getTodos();
+  }, []);
+
+  if (loading) {
+    return <p className="text-center">loading...</p>;
+  }
+  if (error) {
+    return <p>Error Please try again...</p>;
+  }
+
   return (
-    <div style={{ background: "grey", position: "relative", width: "1260px" }}>
-      <img src={image} width="100%" style={{ display: "block" }} />
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "50px",
-          color: "black",
-          fontSize: "24px",
-          fontWeight: "bold",
-          padding: "10px",
-          borderRadius: "5px",
-        }}
-      >
-        <h3 className="fw-bold">Your Text Here</h3>
-      </div>
+    <div>
+      <h1>Todos</h1>
+      <ul>
+        {todos.map(todo => (
+          <li key={todo._id}>
+            <h2>{todo.title}</h2>
+            <p>
+              <strong>Error:</strong> {todo.textError}
+            </p>
+            <p>
+              <strong>Fix:</strong> {todo.textFix}
+            </p>
+            <p>
+              <strong>Code:</strong> {todo.textCode}
+            </p>
+            <p>
+              <strong>Created At: </strong>
+              {new Date(todo.createdAt).toLocaleString()}
+            </p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

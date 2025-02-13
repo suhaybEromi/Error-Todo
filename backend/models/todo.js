@@ -9,7 +9,7 @@ const todoSchema = new Schema(
     },
     imageUrl: {
       type: String,
-      required: false,
+      required: true,
     },
     errorDescription: {
       type: String,

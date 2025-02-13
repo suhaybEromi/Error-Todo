@@ -6,6 +6,7 @@ const fs = require("fs");
 require("dotenv").config();
 const multer = require("multer");
 const mongoose = require("mongoose");
+const userRoutes = require("./routes/user.routes");
 const todoRoutes = require("./routes/todo.routes");
 
 app.use(express.json());
@@ -63,6 +64,7 @@ app.use((req, res, next) => {
   });
 });
 
+app.use("/auth", userRoutes);
 app.use("/api", todoRoutes);
 
 app.use((error, req, res, next) => {

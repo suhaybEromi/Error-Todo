@@ -31,10 +31,7 @@ const todoSchema = new Schema(
       enum: ["pending", "resolved"],
       default: "pending",
     },
-    creator: {
-      type: String,
-      default: "suhayb",
-    },
+    creator: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true },
 );

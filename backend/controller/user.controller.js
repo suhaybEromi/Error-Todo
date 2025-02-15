@@ -1,18 +1,19 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 exports.signup = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed, entered data is incorrect");
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
   const { email, password, name } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
-
-    if (existingUser) {
-      const error = new Error("User already exists");
-      error.statusCode = 422;
-      throw error;
-    }
-
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = new User({ email, password: hashedPassword, name });
@@ -56,6 +57,51 @@ exports.login = async (req, res, next) => {
     return res
       .status(200)
       .json({ message: "Login successfully", token: token, userId: user._id });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getName = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
+
+    res
+      .status(200)
+      .json({ message: "Fething name successfully", name: user.name });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.updateName = async (req, res, next) => {
+  const id = req.params.id;
+  const newName = req.body.name;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
+
+    user.name = newName;
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "Update name successfully", name: user.name });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

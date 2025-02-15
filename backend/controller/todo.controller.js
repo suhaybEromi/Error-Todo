@@ -2,8 +2,9 @@ const Todo = require("../models/todo");
 const User = require("../models/user");
 const fs = require("fs");
 const path = require("path");
-
 const clearImage = require("../util/remove-image");
+
+const { validationResult } = require("express-validator");
 
 exports.getTodos = async (req, res, next) => {
   try {
@@ -37,14 +38,25 @@ exports.getTodoById = async (req, res, next) => {
 };
 
 exports.addTodo = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
+    const error = new Error("Validation failed, entered data is incorrect");
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
   if (!req.file) {
     return res
       .status(400)
-      .json({ message: "Invalid file type. Only images are allowed!" });
+      .json({ message: "Invalid file type. Only upload are allowed!" });
   }
 
   const imageUrl = req.file.path;
-  const { title, errorDescription, fixCode, fixExplanation } = req.body;
+  const { title, errorDescription, fixCode, fixExplanation, status } = req.body;
 
   try {
     const user = await User.findById(req.userId);
@@ -58,6 +70,7 @@ exports.addTodo = async (req, res, next) => {
       errorDescription,
       fixCode,
       fixExplanation,
+      status: status,
       creator: req.userId,
     });
 
@@ -80,7 +93,15 @@ exports.addTodo = async (req, res, next) => {
 
 exports.updateTodo = async (req, res, next) => {
   const id = req.params.id;
-  const { title, errorDescription, fixCode, fixExplanation } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed, entered data is incorrect");
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
+  const { title, errorDescription, fixCode, fixExplanation, status } = req.body;
   let imageUrl = req.body;
 
   try {
@@ -125,6 +146,7 @@ exports.updateTodo = async (req, res, next) => {
     todo.errorDescription = errorDescription;
     todo.fixCode = fixCode;
     todo.fixExplanation = fixExplanation;
+    todo.status = status;
     todo.creator = req.userId;
     const result = await todo.save();
 

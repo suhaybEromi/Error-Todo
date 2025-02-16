@@ -9,11 +9,13 @@ const mongoose = require("mongoose");
 const auth = require("./middleware/auth");
 const userRoutes = require("./routes/user.routes");
 const todoRoutes = require("./routes/todo.routes");
+const prefixAuth = process.env.API_PREFIX_AUTH;
+const prefixApi = process.env.API_PREFIX_API;
 
 app.use(express.json());
 app.use(cors());
 
-app.use("/auth", userRoutes);
+app.use(`/${prefixAuth}`, userRoutes);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -69,7 +71,7 @@ app.use((req, res, next) => {
   });
 });
 
-app.use("/api", todoRoutes);
+app.use(`/${prefixApi}`, todoRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);

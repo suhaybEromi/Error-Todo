@@ -13,6 +13,12 @@ const todoRoutes = require("./routes/todo.routes");
 app.use(express.json());
 app.use(cors());
 
+app.use("/auth", userRoutes);
+
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+app.use(auth);
+
 const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     try {
@@ -52,8 +58,6 @@ const upload = multer({ storage: diskStorage, fileFilter: fileFilter }).single(
   "image",
 );
 
-app.use("/images", express.static(path.join(__dirname, "images")));
-
 app.use((req, res, next) => {
   upload(req, res, err => {
     if (err) {
@@ -65,8 +69,6 @@ app.use((req, res, next) => {
   });
 });
 
-app.use("/auth", userRoutes);
-app.use(auth);
 app.use("/api", todoRoutes);
 
 app.use((error, req, res, next) => {

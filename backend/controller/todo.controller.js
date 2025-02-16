@@ -22,8 +22,8 @@ exports.getTodos = async (req, res, next) => {
 };
 
 exports.getTodoById = async (req, res, next) => {
+  const todoId = req.params.id;
   try {
-    const todoId = req.params.id;
     const todo = await Todo.findById(todoId);
     if (!todo) {
       return res.status(404).json({ message: "Could not find todo." });
@@ -40,9 +40,6 @@ exports.getTodoById = async (req, res, next) => {
 exports.addTodo = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     const error = new Error("Validation failed, entered data is incorrect");
     error.statusCode = 422;
     error.data = errors.array();
@@ -52,7 +49,7 @@ exports.addTodo = async (req, res, next) => {
   if (!req.file) {
     return res
       .status(400)
-      .json({ message: "Invalid file type. Only upload are allowed!" });
+      .json({ message: "Invalid file type. Only upload image are allowed!" });
   }
 
   const imageUrl = req.file.path;
@@ -70,7 +67,7 @@ exports.addTodo = async (req, res, next) => {
       errorDescription,
       fixCode,
       fixExplanation,
-      status: status,
+      status,
       creator: req.userId,
     });
 
@@ -107,6 +104,9 @@ exports.updateTodo = async (req, res, next) => {
   try {
     const todo = await Todo.findById(id);
     if (!todo) {
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
       const error = new Error("Could not find todo");
       error.statusCode = 422;
       throw error;
@@ -117,16 +117,13 @@ exports.updateTodo = async (req, res, next) => {
     }
 
     if (imageUrl !== todo.imageUrl) {
-      const oldImage = path.join(__dirname, "..", todo.imageUrl);
-      fs.unlink(oldImage, err => {
-        if (err) throw err;
-      });
+      clearImage(todo.imageUrl);
     }
 
     if (!req.file) {
       return res
         .status(400)
-        .json({ message: "Invalid file type. Only images are allowed!" });
+        .json({ message: "Invalid file type. Only upload image are allowed!" });
     }
 
     if (!imageUrl) {

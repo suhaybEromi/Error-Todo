@@ -46,7 +46,16 @@ router.post(
   userController.signup,
 );
 
-router.post("/login", userController.login);
+router.post(
+  "/login",
+  [
+    body("email", "Please enter a valid email.").isEmail().normalizeEmail(),
+    body("password").notEmpty(),
+  ],
+  userController.login,
+);
+
+router.post("/logout", userController.logout);
 
 router.get("/status/:id", userController.getName);
 

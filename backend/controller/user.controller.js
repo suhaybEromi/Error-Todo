@@ -36,7 +36,7 @@ exports.login = async (req, res, next) => {
 
     if (!user) {
       const error = new Error("E-Mail is incorrect");
-      error.statusCode = 404;
+      error.statusCode = 422;
       throw error;
     }
 
@@ -44,7 +44,7 @@ exports.login = async (req, res, next) => {
 
     if (!isEqual) {
       const error = new Error("Password is incorrect");
-      error.statusCode = 404;
+      error.statusCode = 422;
       throw error;
     }
 
@@ -64,6 +64,8 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.logout = async (req, res, next) => {};
 
 exports.getName = async (req, res, next) => {
   const id = req.params.id;

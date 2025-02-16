@@ -8,6 +8,10 @@ module.exports = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Please login or sign up." });
+  }
+
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, process.env.SECRET_KEY);

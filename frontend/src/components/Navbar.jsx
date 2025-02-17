@@ -8,9 +8,13 @@ export default function CustomNavbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Navbar expand="md" className="p-2 bg-dark text-white position-relative">
+    <Navbar
+      expand="md"
+      className="p-2 bg-dark text-white position-relative"
+      style={{ zIndex: 1100 }}
+    >
       <Container>
-        <Nav.Link className="text-white fw-bold">Fixing The Bugs</Nav.Link>
+        <Nav className="text-white fw-bold">Fixing The Bugs</Nav>
 
         {/* Toggle Button (Mobile) */}
         <button
@@ -29,6 +33,7 @@ export default function CustomNavbar() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.6 }}
               className="position-absolute top-100 start-0 w-100 bg-dark p-3 d-md-none"
+              style={{ zIndex: 1050 }}
             >
               <Nav className="d-flex flex-column align-items-center gap-3">
                 <Button>Login</Button>

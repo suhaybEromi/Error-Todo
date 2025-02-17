@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./ErrorPage.css";
-import image from "../assets/img/Group.png";
+import image from "../assets/img/laptop.png";
 
 const ErrorPage = () => {
   return (

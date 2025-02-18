@@ -28,8 +28,8 @@ const todoSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "resolved"],
-      default: "pending",
+      enum: ["unresolved", "resolved"],
+      default: "unresolved",
     },
     creator: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },

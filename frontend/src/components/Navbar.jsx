@@ -3,6 +3,7 @@ import Button from "./Button";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export default function CustomNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,8 +37,19 @@ export default function CustomNavbar() {
               style={{ zIndex: 1050 }}
             >
               <Nav className="d-flex flex-column align-items-center gap-3">
-                <Button>Login</Button>
-                <Button>Signup</Button>
+                <Button>
+                  <Link className="text-decoration-none text-light" to="/login">
+                    Login
+                  </Link>
+                </Button>
+                <Button>
+                  <Link
+                    className="text-decoration-none text-light"
+                    to="/signup"
+                  >
+                    Signup
+                  </Link>
+                </Button>
               </Nav>
             </motion.div>
           )}
@@ -46,8 +58,16 @@ export default function CustomNavbar() {
         {/* Desktop Navigation */}
         <div className="d-none d-md-flex ms-auto">
           <Nav className="d-flex align-items-center gap-3">
-            <Button>Login</Button>
-            <Button>Signup</Button>
+            <Button>
+              <Link className="text-decoration-none text-light" to="/login">
+                Login
+              </Link>
+            </Button>
+            <Button>
+              <Link className="text-decoration-none text-light" to="/signup">
+                Signup
+              </Link>
+            </Button>
           </Nav>
         </div>
       </Container>

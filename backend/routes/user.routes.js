@@ -55,8 +55,6 @@ router.post(
   userController.login,
 );
 
-router.post("/logout", userController.logout);
-
 router.get("/status/:id", userController.getName);
 
 router.put("/status/:id", userController.updateName);

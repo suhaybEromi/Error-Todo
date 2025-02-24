@@ -1,9 +1,11 @@
 import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
 
 export default function NotFound() {
   return (
     <div>
+      <Navbar />
       <Container>
         <Row>
           <Col>

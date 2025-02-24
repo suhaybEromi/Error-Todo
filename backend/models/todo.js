@@ -16,15 +16,15 @@ const todoSchema = new Schema(
       required: true,
       default: "No error description provided.",
     },
-    fixCode: {
+    errorFix: {
       type: String,
       required: true,
       default: "No error fix provided.",
     },
-    fixExplanation: {
+    code: {
       type: String,
       required: true,
-      default: "No explanation fix provided.",
+      default: "No code fix provided.",
     },
     status: {
       type: String,

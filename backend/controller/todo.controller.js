@@ -1,17 +1,14 @@
 const Todo = require("../models/todo");
 const User = require("../models/user");
 const fs = require("fs");
-const path = require("path");
 const clearImage = require("../util/remove-image");
 
 const { validationResult } = require("express-validator");
 
 exports.getTodos = async (req, res, next) => {
   try {
-    const todos = await Todo.find().populate("creator");
-    if (todos.length == 0) {
-      return res.status(404).json({ message: "No todo has been recorded" });
-    }
+    const todos = await Todo.find().populate("creator").sort({ createdAt: -1 });
+
     return res.status(200).json({ message: "Fetching todos", todos: todos });
   } catch (err) {
     if (!err.statusCode) {
@@ -24,7 +21,7 @@ exports.getTodos = async (req, res, next) => {
 exports.getTodoById = async (req, res, next) => {
   const todoId = req.params.id;
   try {
-    const todo = await Todo.findById(todoId);
+    const todo = await Todo.findById(todoId).populate("creator");
     if (!todo) {
       return res.status(404).json({ message: "Could not find todo." });
     }
@@ -53,7 +50,7 @@ exports.addTodo = async (req, res, next) => {
   }
 
   const imageUrl = req.file.path;
-  const { title, errorDescription, fixCode, fixExplanation, status } = req.body;
+  const { title, errorDescription, errorFix, code, status } = req.body;
 
   try {
     const user = await User.findById(req.userId);
@@ -65,8 +62,8 @@ exports.addTodo = async (req, res, next) => {
       title,
       imageUrl,
       errorDescription,
-      fixCode,
-      fixExplanation,
+      errorFix,
+      code,
       status,
       creator: req.userId,
     });
@@ -90,6 +87,7 @@ exports.addTodo = async (req, res, next) => {
 
 exports.updateTodo = async (req, res, next) => {
   const id = req.params.id;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error("Validation failed, entered data is incorrect");
@@ -98,7 +96,7 @@ exports.updateTodo = async (req, res, next) => {
     throw error;
   }
 
-  const { title, errorDescription, fixCode, fixExplanation, status } = req.body;
+  const { title, errorDescription, errorFix, code, status } = req.body;
   let imageUrl = req.body;
 
   try {
@@ -141,8 +139,8 @@ exports.updateTodo = async (req, res, next) => {
     todo.title = title;
     todo.imageUrl = imageUrl;
     todo.errorDescription = errorDescription;
-    todo.fixCode = fixCode;
-    todo.fixExplanation = fixExplanation;
+    todo.errorFix = errorFix;
+    todo.code = code;
     todo.status = status;
     todo.creator = req.userId;
     const result = await todo.save();

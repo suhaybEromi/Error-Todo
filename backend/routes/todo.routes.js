@@ -23,10 +23,10 @@ router.post(
     )
       .trim()
       .isLength({ min: 6 }),
-    body("fixCode", "Fix Code should be at least 6 characters")
+    body("errorFix", "Fix Code should be at least 6 characters")
       .trim()
       .isLength({ min: 6 }),
-    body("fixExplanation", "Fix Explanation should be at least 6 characters")
+    body("code", "Fix Explanation should be at least 6 characters")
       .trim()
       .isLength({ min: 6 }),
     body("status", "Status should be at least 6 characters")
@@ -50,10 +50,10 @@ router.put(
     )
       .trim()
       .isLength({ min: 6 }),
-    body("fixCode", "Fix Code should be at least 6 characters")
+    body("errorFix", "Fix Code should be at least 6 characters")
       .trim()
       .isLength({ min: 6 }),
-    body("fixExplanation", "Fix Explanation should be at least 6 characters")
+    body("code", "Fix Explanation should be at least 6 characters")
       .trim()
       .isLength({ min: 6 }),
     body("status", "Status should be at least 6 characters")

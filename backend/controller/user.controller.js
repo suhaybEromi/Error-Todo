@@ -35,7 +35,7 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      const error = new Error("E-Mail is incorrect");
+      const error = new Error("E-Mail already exists");
       error.statusCode = 422;
       throw error;
     }
@@ -51,7 +51,8 @@ exports.login = async (req, res, next) => {
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.SECRET_KEY,
-      { algorithm: "ES256", expiresIn: "72h" },
+      { expiresIn: "1h" },
+      //  algorithm: "ES256",
     );
 
     return res
@@ -64,8 +65,6 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 };
-
-exports.logout = async (req, res, next) => {};
 
 exports.getName = async (req, res, next) => {
   const id = req.params.id;

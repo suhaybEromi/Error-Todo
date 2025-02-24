@@ -4,22 +4,32 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Detail from "./components/Detail";
+import AuthContextProvider from "./components/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Todos />} />
-          <Route path="/detail" element={<Detail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+    <>
+      <AuthContextProvider>
+        <div>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<PrivateRoute />}>
+                <Route path="/" element={<Todos />} />
+              </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <br />
-      </BrowserRouter>
-    </div>
+              <Route path="/detail" element={<PrivateRoute />}>
+                <Route path="/detail/:todoId" element={<Detail />} />
+              </Route>
+
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </AuthContextProvider>
+    </>
   );
 }
 

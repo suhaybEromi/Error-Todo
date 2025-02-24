@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Button from "./Button";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 export default function CustomNavbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = () => logout();
 
   return (
     <Navbar
@@ -50,6 +54,11 @@ export default function CustomNavbar() {
                     Signup
                   </Link>
                 </Button>
+                <Button onClick={handleLogout}>
+                  <Link className="text-decoration-none text-light" to="/login">
+                    Logout
+                  </Link>
+                </Button>
               </Nav>
             </motion.div>
           )}
@@ -66,6 +75,11 @@ export default function CustomNavbar() {
             <Button>
               <Link className="text-decoration-none text-light" to="/signup">
                 Signup
+              </Link>
+            </Button>
+            <Button onClick={handleLogout}>
+              <Link className="text-decoration-none text-light" to="/login">
+                Logout
               </Link>
             </Button>
           </Nav>
